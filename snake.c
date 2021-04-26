@@ -40,19 +40,24 @@ void print_field (char field[SIZE][SIZE]) {
    int c = '#';
    printf("  ");
    for (i = 0; i < SIZE; i++) {
-      printf(" %c", c);
+      printf("\e[1;33m %c\e[0m", c);
    }
    printf("\n");
    for (i = 0; i < SIZE; i++) {
-      printf(" %c ",c);
+      printf("\e[1;33m %c \e[0m",c);
       for (j = 0; j < SIZE; j++) {
+      	if(field[i][j] == '@')
+         printf("\e[1;31m%c \e[0m", field[i][j]);
+        else if(field[i][j] == '*')
+         printf("\e[1;32m%c \e[0m", field[i][j]); 
+        else
          printf("%c ", field[i][j]);
       } 
-      printf("%c\n", c);
+      printf("\e[1;33m%c\n\e[0m", c);
    }
    printf("  ");
    for (i = 0; i < SIZE; i++) {
-      printf(" %c", c);
+      printf("\e[1;33m %c\e[0m", c);
    }
    printf("\n");
 }
@@ -85,8 +90,8 @@ int finish (Deck *d) {
 Point spawnFruta(Deck* d, char field[SIZE][SIZE]){
    int x, y, valido;
    do{
-   	x = (rand()%24) + 1;
-   	y = (rand()%24) + 1;
+   	x = (rand()%22) + 2;
+   	y = (rand()%22) + 2;
    	valido = 1;
    
    	for(Deck* i = d; i != NULL; i = i->next){
@@ -147,19 +152,11 @@ int main () {
      while((!kbhit()) && (!finish(d))) {
        if (reverse) {
            Point p = getFront (d);
-           //if (pressionou_act ==  'w') { d = insertFront (d, (Point){p.x-1, p.y}, field); }
-           //else if (pressionou_act ==  's') { d = insertFront (d, (Point){p.x+1, p.y}, field); }
-           //else if (pressionou_act ==  'a') { d = insertFront (d, (Point){p.x, p.y-1}, field); }
-           //else { d = insertFront (d, (Point){p.x, p.y+1}, field); }
-	   cresceSnakeFront(d, field, pressionou_act, p);
+	   d = cresceSnakeFront(d, field, pressionou_act, p);
 	   d = deleteRear (d, field);
         }
         else {
            Point p = getRear (d);
-           //if (pressionou_act ==  'w') { d = insertRear (d, (Point){p.x-1, p.y}, field); }
-           //else if (pressionou_act ==  's') { d = insertRear (d, (Point){p.x+1, p.y}, field); }
-           //else if (pressionou_act ==  'a') { d = insertRear (d, (Point){p.x, p.y-1}, field); }
-           //else { d = insertRear (d, (Point){p.x, p.y+1}, field); }
 	   d = cresceSnakeRear(d, field, pressionou_act, p);
 	   d = deleteFront (d, field);
         }
@@ -167,67 +164,26 @@ int main () {
        if(reverse){
            Point p = getFront(d);
            if(p.x == fruta.x && p.y == fruta.y){
-             // fruta = spawnFruta(d,field);
-	     // if (pressionou_act ==  'w') { d = insertFront (d, (Point){p.x-1, p.y}, field); }
-              //else if (pressionou_act ==  's') { d = insertFront (d, (Point){p.x+1, p.y}, field); }
-              //else if (pressionou_act ==  'a') { d = insertFront (d, (Point){p.x, p.y-1}, field); }
-              //else { d = insertFront (d, (Point){p.x, p.y+1}, field); }
 	      d = cresceSnakeFront(d, field, pressionou_act, p);
 	      fruta = spawnFruta(d,field);
 	      snake_size++;
 	      score += 100;
-	      dificuldade -= 10;
+	      dificuldade -= 5000;
            }
         }
         else{
            Point p = getRear(d);
            if(p.x == fruta.x && p.y == fruta.y){
-             // fruta =  spawnFruta(d,field);
-	      //if (pressionou_act ==  'w') { d = insertRear (d, (Point){p.x-1, p.y}, field); }
-              //else if (pressionou_act ==  's') { d = insertRear (d, (Point){p.x+1, p.y}, field); }
-              //else if (pressionou_act ==  'a') { d = insertRear (d, (Point){p.x, p.y-1}, field); }
-              //else { d = insertRear (d, (Point){p.x, p.y+1}, field); }
 	      d = cresceSnakeRear(d, field, pressionou_act, p);
 	      fruta = spawnFruta(d, field);
 	      snake_size++;
 	      score += 100;
-	      dificuldade -= 10;
+	      dificuldade -= 5000;
            }
         }
 
-        /*if (reverse) {
-           Point p = getFront (d);
-           if (pressionou_act ==  'w') { d = insertFront (d, (Point){p.x-1, p.y}, field); }
-           else if (pressionou_act ==  's') { d = insertFront (d, (Point){p.x+1, p.y}, field); }
-           else if (pressionou_act ==  'a') { d = insertFront (d, (Point){p.x, p.y-1}, field); }
-           else { d = insertFront (d, (Point){p.x, p.y+1}, field); }
-	   if(p.x == fruta.x && p.y == fruta.y){
-	   	spawnFruta(d, field);
-		snake_size++;
-		score += 100;
-		dificuldade -= 10;
-	   }
-	   else
-	   	d = deleteRear (d, field);
-        }
-        else {
-           Point p = getRear (d);
-           if (pressionou_act ==  'w') { d = insertRear (d, (Point){p.x-1, p.y}, field); }
-           else if (pressionou_act ==  's') { d = insertRear (d, (Point){p.x+1, p.y}, field); }
-           else if (pressionou_act ==  'a') { d = insertRear (d, (Point){p.x, p.y-1}, field); }
-           else { d = insertRear (d, (Point){p.x, p.y+1}, field); }
-	   if(p.x == fruta.x && p.y == fruta.y){
-	   	spawnFruta(d, field);
-		snake_size++;
-		score += 100;
-		dificuldade -= 10;
-	   }
-	   else
-	   	d = deleteFront (d, field);
-        }*/
-
         print_field (field);
-	printf("\n Score: %lld   Tamanho: %d\n",score, snake_size);
+	printf("\n \e[4;37mScore:\e[0m \e[1;32m%lld\e[0m   \e[4;37mTamanho:\e[0m \e[1;32m%d\e[0m\n",score, snake_size);
         usleep(dificuldade);
         system("clear");
      }
@@ -242,6 +198,6 @@ int main () {
 
      }
    }
-   printf ("      FIM DE JOGO      \n pontuacao final:%lld\n", score);
+   printf ("      \e[4;31mFIM DE JOGO\e[0m      \n \e[1;37mPontuacao Final:\e[0m \e[1;33m %lld \e[0m\n", score);
    return 0;
 }
