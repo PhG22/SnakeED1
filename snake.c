@@ -1,10 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <termios.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <time.h>
-#include "deck.h"
+#include "snake.h"
+
+#define MAX_LEN 128
 
 int kbhit(void) {
   struct termios oldt, newt;
@@ -125,79 +121,4 @@ Deck* cresceSnakeRear(Deck* d, char field[SIZE][SIZE], char press, Point p){
         else { d = insertRear (d, (Point){p.x, p.y+1}, field); }
 
 	return d;
-}
-
-int main () {
-
-   char field[SIZE][SIZE];
-   initialize_field (field); 
-   int center = SIZE/2;
-   int snake_size = 5;
-   Deck *d = createDeck ();
-   long long int score = 0;
-   int dificuldade = 300000;
-
-   /*Inserindo a Snake no centro do campo: */
-   int i;
-   for (i = center-snake_size/2; i <= center+snake_size/2; i++) {
-      d = insertFront (d, (Point){center, i}, field);
-   }
-
-   char pressionou_prv = ' ';
-   char pressionou_act = 'a';
-   int reverse = 0; /*variável para inverter cabeça com cauda (e vice-versa)*/
-   srand(time(NULL));
-   Point fruta = spawnFruta(d,field);
-   while (!finish(d)) {
-     while((!kbhit()) && (!finish(d))) {
-       if (reverse) {
-           Point p = getFront (d);
-	   d = cresceSnakeFront(d, field, pressionou_act, p);
-	   d = deleteRear (d, field);
-        }
-        else {
-           Point p = getRear (d);
-	   d = cresceSnakeRear(d, field, pressionou_act, p);
-	   d = deleteFront (d, field);
-        }
-
-       if(reverse){
-           Point p = getFront(d);
-           if(p.x == fruta.x && p.y == fruta.y){
-	      d = cresceSnakeFront(d, field, pressionou_act, p);
-	      fruta = spawnFruta(d,field);
-	      snake_size++;
-	      score += 100;
-	      dificuldade -= 5000;
-           }
-        }
-        else{
-           Point p = getRear(d);
-           if(p.x == fruta.x && p.y == fruta.y){
-	      d = cresceSnakeRear(d, field, pressionou_act, p);
-	      fruta = spawnFruta(d, field);
-	      snake_size++;
-	      score += 100;
-	      dificuldade -= 5000;
-           }
-        }
-
-        print_field (field);
-	printf("\n \e[4;37mScore:\e[0m \e[1;32m%lld\e[0m   \e[4;37mTamanho:\e[0m \e[1;32m%d\e[0m\n",score, snake_size);
-        usleep(dificuldade);
-        system("clear");
-     }
-     if (!finish(d)) {
-        /*Cada vez que uma tecla é pressionada o controle executa esse trecho: */
-        pressionou_prv = pressionou_act;
-        pressionou_act = getchar();
-        if ((pressionou_act ==  's') && (pressionou_prv ==  'w')) { reverse = !reverse; }
-        else if ((pressionou_act ==  'w') && (pressionou_prv ==  'w')) { reverse = !reverse; }
-        else if ((pressionou_act ==  'a') && (pressionou_prv ==  'd')) { reverse = !reverse; }
-        else if ((pressionou_act ==  'd') && (pressionou_prv ==  'a')) { reverse = !reverse; }
-
-     }
-   }
-   printf ("      \e[4;31mFIM DE JOGO\e[0m      \n \e[1;37mPontuacao Final:\e[0m \e[1;33m %lld \e[0m\n", score);
-   return 0;
 }
