@@ -4,6 +4,7 @@ trabalho avaliativo da disciplina de Estrutura de Dados 1 do curso de Engenaria 
 
 # Autores: 
 Pedro Henrique Guimaraes Gomes
+
 Luca Nozzoli 
 
 # TODO
